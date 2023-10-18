@@ -15,7 +15,7 @@ func main(){
 	http.HandleFunc("/", HandleFrm)
 	http.HandleFunc("/shorturl", HandleShort)
 	http.HandleFunc("/short/", HandleRdirect)
-	http.ListenAndServe("":3030", nil)
+	http.ListenAndServe(":8080", nil)
 }
 
 func handleFrm(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +38,40 @@ func handleFrm(w http.ResponseWriter, r *http.Request) {
 				<input type="url" name="url" placeholder="Enter a URL" required>
 				<input type="submit" value="Shorturl">
 			</form>
+		</body>
+		</html>
+	`)
+}
+
+
+func handleShort(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	originalURL := r.FormValue("url")
+	if originalURL == "" {
+		http.Error(w, "URL parameter is missing", http.StatusBadRequest)
+		return
+	}
+
+	shortKey := generateShortKey()
+	urlMap[shortKey] = originalURL
+
+	shrtEndURL := fmt.Sprintf("http://localhost:8080/short/%s", shortKey)
+
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(w, `
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<title>URL Shortener</title>
+		</head>
+		<body>
+			<h2>URL Shortener</h2>
+			<p>Original URL: `, originalURL, `</p>
+			<p>Shortened URL: <a href="`, shrtEndURL, `">`, shrtEndURL, `</a></p>
 		</body>
 		</html>
 	`)
