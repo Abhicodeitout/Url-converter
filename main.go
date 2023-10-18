@@ -93,3 +93,15 @@ func handleRdirect(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, originalURL, http.StatusMovedPermanently)
 }
+
+func generateShortKey() string {
+	const characterset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const keyLength = 6
+
+	rand.Seed(time.Now().UnixNano())
+	shortKey := make([]byte, keyLength)
+	for i := range shortKey {
+		shortKey[i] = characterset[rand.Intn(len(characterset))]
+	}
+	return string(shortKey)
+}
