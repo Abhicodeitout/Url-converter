@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-var urlMap := make(map[string]string)
+var urlMap = make(map[string]string)
 
 func main(){
-	http.HandleFunc("/", HandleFrm)
-	http.HandleFunc("/shorturl", HandleShort)
-	http.HandleFunc("/short/", HandleRdirect)
+	http.HandleFunc("/", handleFrm)
+	http.HandleFunc("/shorturl", handleShort)
+	http.HandleFunc("/short/", handleRdirect)
 	http.ListenAndServe(":8080", nil)
 }
 
