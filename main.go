@@ -46,7 +46,7 @@ func handleFrm(w http.ResponseWriter, r *http.Request) {
 
 func handleShort(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "Invalid method", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -75,4 +75,21 @@ func handleShort(w http.ResponseWriter, r *http.Request) {
 		</body>
 		</html>
 	`)
+}
+
+
+func handleRdirect(w http.ResponseWriter, r *http.Request) {
+	shortKey := strings.TrimPrefix(r.URL.Path, "/short/")
+	if shortKey == "" {
+		http.Error(w, "Shortened key missing", http.StatusBadRequest)
+		return
+	}
+
+	originalURL, found := urlMap[shortKey]
+	if !found {
+		http.Error(w, "Shortened key not found", http.StatusNotFound)
+		return
+	}
+
+	http.Redirect(w, r, originalURL, http.StatusMovedPermanently)
 }
